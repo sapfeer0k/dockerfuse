@@ -27,6 +27,7 @@ const (
 var (
 	containerID  string
 	mountPoint   string
+	path         string
 	daemonize    bool
 	printVersion bool
 	// Version holds the version tag, and it is set at build-time
@@ -44,6 +45,9 @@ func init() {
 
 	flag.StringVar(&mountPoint, "mount", "", "Mount point for containter FS")
 	flag.StringVar(&mountPoint, "m", "", "Mount point for containter FS")
+
+	flag.StringVar(&path, "path", "/", "Path inside the containter")
+	flag.StringVar(&path, "p", "/", "Path inside the containter")
 
 	flag.BoolVar(&daemonize, "daemonize", false, "Daemonize fuse process")
 	flag.BoolVar(&daemonize, "d", false, "Daemonize fuse process")
@@ -109,7 +113,7 @@ func main() {
 	log.Printf("mounting FS to %v...", mountPoint)
 	vEntryTTL := entryTTL
 	vAttrTTL := attrTTL
-	server, err := fs.Mount(mountPoint, client.NewNode(fuseDockerClient, "/", ""), &fs.Options{
+	server, err := fs.Mount(mountPoint, client.NewNode(fuseDockerClient, path, ""), &fs.Options{
 		EntryTimeout:    &vEntryTTL,
 		AttrTimeout:     &vAttrTTL,
 		NegativeTimeout: &vEntryTTL,
